@@ -1,0 +1,14 @@
+version: '3.9'
+
+services:
+  web:
+    build: ./rzd_test
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./rzd_test/:/usr/src/app/
+    ports:
+      - 1337:8000
+    environment:
+      - DEBUG=1
+      - SECRET_KEY=django-insecure-4=k21b5!7=1yfeadsh$$iwk1)ab7^2s_5uth#$$=0gd4@x8@+ysr
+      - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
