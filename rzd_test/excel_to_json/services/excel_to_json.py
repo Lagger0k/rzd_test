@@ -17,9 +17,6 @@ def convert_excel_to_json(file_path: str) -> bool:
     try:
         json_file_name = _create_json_name(file_path)
         data = pandas.read_excel(file_path, sheet_name=None)
-        # удаляем обработанный файл, так как стоит задача хранить только json
-        os.remove(file_path)
-
         data_dict = dict()
         for name, df in data.items():
             df.update(df.select_dtypes('datetime').apply(lambda x: x.dt.strftime('%Y-%m-%dT%H:%M:%S.%fZ')))
