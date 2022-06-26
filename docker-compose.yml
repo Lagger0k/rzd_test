@@ -12,3 +12,37 @@ services:
       - DEBUG=1
       - SECRET_KEY=django-insecure-4=k21b5!7=1yfeadsh$$iwk1)ab7^2s_5uth#$$=0gd4@x8@+ysr
       - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
+  celery:
+    container_name: celery_worker
+    build: ./rzd_test
+    command: celery -A rzd_test.celery worker --loglevel=info
+    volumes:
+      - ./rzd_test:/usr/src/app
+    environment:
+      - DEBUG=1
+      - SECRET_KEY=django-insecure-4=k21b5!7=1yfeadsh$$iwk1)ab7^2s_5uth#$$=0gd4@x8@+ysr
+      - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
+      - CELERY_BROKER=redis://redis:6379/0
+      - CELERY_BACKEND=redis://redis:6379/0
+    depends_on:
+      - web
+      - redis
+
+  redis:
+    image: redis:7-alpine
+
+  dashboard:
+    build: ./rzd_test
+    command: celery -A rzd_test flower --port=5555 --broker=redis://redis:6379/0
+    ports:
+      - 5555:5555
+    environment:
+      - DEBUG=1
+      - SECRET_KEY=django-insecure-4=k21b5!7=1yfeadsh$$iwk1)ab7^2s_5uth#$$=0gd4@x8@+ysr
+      - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
+      - CELERY_BROKER=redis://redis:6379/0
+      - CELERY_BACKEND=redis://redis:6379/0
+    depends_on:
+      - web
+      - redis
+      - celery
