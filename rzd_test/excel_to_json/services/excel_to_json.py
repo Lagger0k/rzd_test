@@ -4,7 +4,6 @@ import simplejson
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from celery import shared_task
-from excel_to_json.exceptions import InvalidFile
 from rzd_test import settings
 
 
@@ -25,7 +24,8 @@ def convert_excel_to_json(file_path: str) -> bool:
         with open(json_file_name, 'w') as file:
             simplejson.dump(data_dict, file, indent=4, ensure_ascii=False, default=str, ignore_nan=True)
         return True
-    except InvalidFile:
+    except Exception as err:
+        print(err)
         return False
     finally:
         os.remove(file_path)
@@ -40,7 +40,8 @@ def save_file(file_name: str, file: InMemoryUploadedFile) -> str | None:
                 f.write(chunk)
         file_path = os.path.join(settings.BASE_DIR, file_name)
         return file_path
-    except InvalidFile:
+    except Exception as err:
+        print(err)
         return None
 
 

@@ -1,2 +1,2 @@
-class InvalidFile(Exception):
-    pass
+class MissingFileError(Exception):
+    """Клиент не передал файл в POST запросе"""
